@@ -1,9 +1,16 @@
 import React from "react";
-
+import Header from "./components/shared/Header/Header";
+import HomePage from "./components/HomePage/HomePage";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 const App = () => {
   return (
     <>
-      <h1>Welcome to my store</h1>
+      <Router>
+        <Header />
+        <Switch>
+          <HomePage />
+        </Switch>
+      </Router>
     </>
   );
 };
