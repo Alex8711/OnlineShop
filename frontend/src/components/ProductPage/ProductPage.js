@@ -1,12 +1,20 @@
 import React from "react";
-import products from "../../products";
+import { useEffect } from "react";
+import { useState } from "react";
 import { Container, Col, Row, Card, ListGroup, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import axios from "axios";
 
 const ProductPage = ({ match }) => {
-  const product = products.filter(
-    (product) => product._id === match.params.id
-  )[0];
+  const [product, setProduct] = useState({});
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const res = await axios.get(`/api/products/${match.params.id}`);
+      setProduct(res.data);
+    };
+    fetchProduct();
+  }, [match.params.id]);
+
   return (
     <>
       <Container>
