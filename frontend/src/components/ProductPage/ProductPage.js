@@ -1,6 +1,7 @@
 import React from "react";
 import products from "../../products";
 import { Container, Col, Row, Card, ListGroup, Button } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
 const ProductPage = ({ match }) => {
   const product = products.filter(
@@ -9,6 +10,11 @@ const ProductPage = ({ match }) => {
   return (
     <>
       <Container>
+        <LinkContainer to="/">
+          <Button type="button" className="my-3 btn-success">
+            GO BACK
+          </Button>
+        </LinkContainer>
         <Row>
           <Col md={6}>
             <Card className="my-3">
