@@ -1,6 +1,12 @@
-// import express from "express";
-const express = require("express");
-const products = require("./data/products");
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./connectDB.js";
+import products from "./data/products.js";
+
+dotenv.config();
+
+connectDB();
+
 const app = express();
 
 app.listen(5000, console.log(`Server running on prot 5000`));
