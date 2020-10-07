@@ -1,31 +1,33 @@
 import React from "react";
-// import products from "../../products";
 import { Row, Col, Container } from "react-bootstrap";
 import Product from "../Product/Product";
-import axios from "axios";
-import { useState } from "react";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listProducts } from "../../actions/productAction";
 
 const HomePage = () => {
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
+
+  const { products, loading } = useSelector((state) => state.productList);
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await axios.get("/api/products");
-      setProducts(res.data);
-    };
-    fetchProducts();
-  }, []);
+    dispatch(listProducts());
+  }, [dispatch]);
+
   return (
     <>
-      <Container>
-        <Row>
-          {products.map((product) => (
-            <Col sm={12} md={6} lg={4} xl={3} key={product._id}>
-              <Product product={product} />
-            </Col>
-          ))}
-        </Row>
-      </Container>
+      {loading ? (
+        <h2>Loading</h2>
+      ) : (
+        <Container>
+          <Row>
+            {products.map((product) => (
+              <Col sm={12} md={6} lg={4} xl={3} key={product._id}>
+                <Product product={product} />
+              </Col>
+            ))}
+          </Row>
+        </Container>
+      )}
     </>
   );
 };
