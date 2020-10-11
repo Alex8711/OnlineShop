@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
   }
 
   let isDuplicate;
-  isDuplicate = User.findOne({ email: email });
+  isDuplicate = await User.findOne({ email: email });
   if (isDuplicate) {
     return res.send("the Email is already registered!");
   }
@@ -32,8 +32,46 @@ router.post("/register", async (req, res) => {
     email,
     password: hashedPassword,
   });
-  await newUser.save();
-  res.status(200).send({ user: newUser });
+  const savedUser = await newUser.save();
+  const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  res.header("auth-token", token);
+  res.status(200).send({ user: newUser, token });
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const schema = Joi.object({
+    email: Joi.string().min(6).email().required(),
+    password: Joi.string().min(5).required(),
+  });
+  let validateRes;
+  try {
+    validateRes = await schema.validateAsync({ email, password });
+  } catch (error) {
+    return res.send("Please input valid email and password!");
+  }
+
+  const queryResult = await User.findOne({ email: email });
+  if (!queryResult) {
+    return res.send("User does not exist!");
+  }
+  let verifyPwd;
+  try {
+    verifyPwd = await bcrypt.compare(password, queryResult.password);
+  } catch (error) {
+    console.log(error);
+    return res.send("credential issue of this account");
+  }
+  if (!verifyPwd) {
+    return res.send("credential issue of this account");
+  }
+  const token = jwt.sign({ _id: queryResult._id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  res.header("auth-token", token);
+  res.status(200).send({ user: queryResult, token });
 });
 
 export default router;

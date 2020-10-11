@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./connectDB.js";
 import productsAPI from "./api/productsAPI.js";
 import usersAPI from "./api/usersAPI.js";
+import testAPI from "./api/testToken.js";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/products", productsAPI);
 app.use("/api/users", usersAPI);
+app.use("/api", testAPI);
 
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
