@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getProduct } from "../../actions/productAction";
+import { getProduct } from "../../actions/productActions";
 import { useHistory } from "react-router-dom";
 
 const ProductPage = ({ match }) => {

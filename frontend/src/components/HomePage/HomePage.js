@@ -3,7 +3,7 @@ import { Row, Col, Container } from "react-bootstrap";
 import Product from "../Product/Product";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listProducts } from "../../actions/productAction";
+import { listProducts } from "../../actions/productActions";
 
 const HomePage = () => {
   const dispatch = useDispatch();

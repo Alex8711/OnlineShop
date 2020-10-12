@@ -18,8 +18,7 @@ app.use("/api/users", usersAPI);
 app.use("/api", testAPI);
 
 app.use((err, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode);
+  res.status(err.code || statusCode);
   res.json({
     message: err.message || "An unknown error occurred!",
   });

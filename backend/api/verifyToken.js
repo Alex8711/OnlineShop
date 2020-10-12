@@ -1,16 +1,21 @@
 import jwt from "jsonwebtoken";
+import HttpError from "../models/http-error.js";
+import User from "../models/userModel.js";
 
-const auth = (req, res, next) => {
-  const token = req.header("auth-token");
-  if (!token) {
-    return res.status(401).send("Access denied");
-  }
+const auth = async (req, res, next) => {
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    const token = req.headers.authorization.split(" ")[1];
+    if (!token) {
+      throw new Error("Authentication failed!");
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = await User.findById(decoded).select("-password");
+
     next();
-  } catch (error) {
-    res.status(400).send("Invalid Token");
+  } catch (err) {
+    const error = HttpError("Authentication failed!", 401);
+    return next(error);
   }
 };
 

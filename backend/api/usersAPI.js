@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import Joi from "@hapi/joi";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+import HttpError from "../models/http-error.js";
+import auth from "./verifyToken.js";
 const router = express();
 
 router.post("/register", async (req, res) => {
@@ -40,7 +42,7 @@ router.post("/register", async (req, res) => {
   res.status(200).send({ user: newUser, token });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   const schema = Joi.object({
     email: Joi.string().min(6).email().required(),
@@ -50,28 +52,75 @@ router.post("/login", async (req, res) => {
   try {
     validateRes = await schema.validateAsync({ email, password });
   } catch (error) {
-    return res.send("Please input valid email and password!");
+    return next(new HttpError("Please input valid email and password!", 401));
   }
 
-  const queryResult = await User.findOne({ email: email });
-  if (!queryResult) {
-    return res.send("User does not exist!");
+  let queryResult;
+  try {
+    queryResult = await User.findOne({ email: email });
+  } catch (error) {
+    return next(
+      new HttpError("Logging in failed, please try again later.", 500)
+    );
   }
-  let verifyPwd;
+
+  if (!queryResult) {
+    return next(
+      new HttpError("Invalid credentials, could not log you in.", 500)
+    );
+  }
+
+  let verifyPwd = false;
   try {
     verifyPwd = await bcrypt.compare(password, queryResult.password);
   } catch (error) {
-    console.log(error);
-    return res.send("credential issue of this account");
+    return next(
+      new HttpError(
+        "Could not log you in, please check your credentials and try again.",
+        500
+      )
+    );
   }
+
   if (!verifyPwd) {
-    return res.send("credential issue of this account");
+    return next(
+      new HttpError("Invalid credentials, could not log you in.", 403)
+    );
   }
-  const token = jwt.sign({ _id: queryResult._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+
+  let token;
+  try {
+    token = jwt.sign({ _id: queryResult._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+  } catch (error) {
+    return next(
+      new HttpError("Logging in failed, please try again later.", 500)
+    );
+  }
+
+  res.status(200).json({
+    _id: queryResult._id,
+    name: queryResult.name,
+    email: queryResult.email,
+    isAdmin: queryResult.isAdmin,
+    token,
   });
-  res.header("auth-token", token);
-  res.status(200).send({ user: queryResult, token });
+});
+
+// get user profile
+router.get("/profile", auth, async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  } else {
+    return next(new HttpError("User not found", 404));
+  }
 });
 
 export default router;
