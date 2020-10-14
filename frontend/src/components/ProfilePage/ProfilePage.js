@@ -19,7 +19,7 @@ const ProfilePage = ({ location }) => {
   const { loading, error, user } = userDetails;
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-  const userUpdateProfile = useSelector((state) => state.updateUserProfile);
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success } = userUpdateProfile;
   console.log(location);
   const history = useHistory();
@@ -56,7 +56,7 @@ const ProfilePage = ({ location }) => {
             <h2>User Profile</h2>
             {message}
             {error}
-            {success}
+            {/* {success} */}
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
                 <Form.Label>Name</Form.Label>

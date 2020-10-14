@@ -1,6 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import Joi from "@hapi/joi";
+import Joi from "joi";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import HttpError from "../models/http-error.js";
@@ -144,24 +144,30 @@ router.get("/profile", auth, async (req, res, next) => {
 // update user profile
 router.put("/profile", auth, async (req, res, next) => {
   const user = await User.findById(req.user._id);
-  const schema = Joi.object({
+  const { name, email, password } = req.body;
+  const schemaName = Joi.object({
     name: Joi.string().min(3).required(),
+  });
+  const schemaEmail = Joi.object({
     email: Joi.string().min(6).email().required(),
+  });
+  const schemaPassword = Joi.object({
     password: Joi.string().min(5).required(),
   });
 
   if (user) {
-    if (req.body.name) {
+    if (name) {
       let validateRes;
       try {
-        validateRes = await schema.validateAsync({ name: req.body.name });
+        validateRes = await schemaName.validateAsync({ name });
       } catch (error) {
+        console.log(error);
         return next(
           new HttpError("Please input valid name,at least 3 characters", 500)
         );
       }
       if (validateRes) {
-        user.name = req.body.name;
+        user.name = name;
       } else {
         return next(
           new HttpError("Please input valid name,at least 3 characters", 500)
@@ -171,26 +177,26 @@ router.put("/profile", auth, async (req, res, next) => {
       user.name = user.name;
     }
 
-    if (req.body.email) {
+    if (email) {
       let validateRes;
       try {
-        validateRes = await schema.validateAsync({ email: req.body.email });
+        validateRes = await schemaEmail.validateAsync({ email });
       } catch (error) {
         return next(new HttpError("Please input valid email", 500));
       }
       if (validateRes) {
-        user.email = req.body.email;
+        user.email = email;
       } else {
         return next(new HttpError("Please input valid email", 500));
       }
     } else {
       user.email = user.email;
     }
-    if (req.body.password) {
+    if (password) {
       let validateRes;
       try {
-        validateRes = await schema.validateAsync({
-          password: req.body.password,
+        validateRes = await schemaPassword.validateAsync({
+          password,
         });
       } catch (error) {
         return next(
@@ -202,7 +208,7 @@ router.put("/profile", auth, async (req, res, next) => {
       }
       if (validateRes) {
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
         user.password = hashedPassword;
       } else {
         return next(
