@@ -1,21 +1,33 @@
 import React ,{useState,useEffect}from 'react';
 import { Table, Button} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { listUsers } from "../../actions/userActions";
+import { listUsers,deleteUser } from "../../actions/userActions";
 import { Link, useHistory } from "react-router-dom";
 import {LinkContainer} from 'react-router-bootstrap';
 
 const UserListPage = () => {
-
+    const history = useHistory();
     const dispatch = useDispatch();
     const userList = useSelector(state=>state.userList);
+    const userLogin = useSelector(state=>state.userLogin);
+    const userDelete = useSelector(state=>state.userDelete);
     const {loading,error,users} = userList;
+    const {userInfo} = userLogin;
+    const {success} = userDelete;
     useEffect(()=>{
-       dispatch(listUsers())
-    },[dispatch])
+        if(userInfo&&userInfo.isAdmin){
+            dispatch(listUsers())
+        }else{
+            history.push('/login');
+        }
+       
+    },[dispatch,history,success])
 
-    const deleteHandler=()=>{
-        console.log('object');
+    const deleteHandler=(id)=>{
+        if(window.confirm('Are you sure')){
+            dispatch(deleteUser(id));
+        }
+        
     }
 
     return ( <>

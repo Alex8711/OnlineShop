@@ -259,5 +259,19 @@ router.get("/", auth,admin, async (req, res, next) => {
   }
 });
 
+// Delete user
+// 
+// Private/ only for admin
+router.delete("/:id", auth,admin, async (req, res, next) => {
+  const user = await User.findById(req.params.id)
+
+  if (user) {
+    await user.remove()
+    res.json({message:"user removed"})
+  } else {
+    return next(new HttpError("User not found", 404));
+  }
+});
+
 
 export default router;
