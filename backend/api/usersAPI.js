@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import HttpError from "../models/http-error.js";
 import auth from "./verifyToken.js";
+import admin from './verifyAdmin.js';
+
 const router = express();
 
 //register
@@ -243,5 +245,19 @@ router.put("/profile", auth, async (req, res, next) => {
     return next(new HttpError("User not found", 404));
   }
 });
+
+//get all users
+// 
+// Private/ only for admin
+router.get("/", auth,admin, async (req, res, next) => {
+  const users = await User.find({});
+
+  if (users) {
+    res.json(users);
+  } else {
+    return next(new HttpError("Users not found", 404));
+  }
+});
+
 
 export default router;

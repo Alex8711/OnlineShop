@@ -6,6 +6,8 @@ import CartPage from "./components/CartPage/CartPage";
 import LoginPage from "./components/LoginPage/LoginPage";
 import RegisterPage from "./components/RegisterPage/RegisterPage";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
+import ShippingPage from "./components/ShippingPage/ShippingPage";
+import UserListPage from './components/UserListPage/UserListPage';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
           <Route path="/login" exact component={LoginPage} />
           <Route path="/register" exact component={RegisterPage} />
           <Route path="/profile" exact component={ProfilePage} />
+          <Route path="/shipping" exact component={ShippingPage} />
+          <Route path="/admin/userlist" exact component={UserListPage} />
         </Switch>
       </Router>
     </>
