@@ -8,6 +8,8 @@ import RegisterPage from "./components/RegisterPage/RegisterPage";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import ShippingPage from "./components/ShippingPage/ShippingPage";
 import UserListPage from './components/UserListPage/UserListPage';
+import AdminProductListPage from './components/AdminProductListPage/AdminProductListPage';
+import ProductCreatePage from './components/ProductCreatePage/ProductCreatePage';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
           <Route path="/profile" exact component={ProfilePage} />
           <Route path="/shipping" exact component={ShippingPage} />
           <Route path="/admin/userlist" exact component={UserListPage} />
+          <Route path="/admin/productlist" exact component={AdminProductListPage} />
+          <Route path="/admin/product/:id/edit" exact component={ProductCreatePage} />
         </Switch>
       </Router>
     </>

@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { productListReducer, productReducer } from "./productReducers";
+import { productListReducer, productDetailReducer,productDeleteReducer,productCreateReducer } from "./productReducers";
 import {
   userLoginReducer,
   userRegisterReducer,
@@ -11,7 +11,9 @@ import {
 
 const rootReducers = combineReducers({
   productList: productListReducer,
-  product: productReducer,
+  productDetail: productDetailReducer,
+  productDelete:productDeleteReducer,
+  productCreate:productCreateReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,

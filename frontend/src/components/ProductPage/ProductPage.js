@@ -18,7 +18,7 @@ const ProductPage = ({ match }) => {
   const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { product, loading } = useSelector((state) => state.product);
+  const { product, loading } = useSelector((state) => state.productDetail);
   useEffect(() => {
     dispatch(getProduct(match.params.id));
   }, [dispatch]);
