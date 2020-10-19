@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
 import { Link, useHistory } from "react-router-dom";
 import { useEffect } from "react";
+import Loader from '../shared/Loader/Loader';
+import Message from '../shared/Message/Message';
 
 const LoginPage = ({ location }) => {
   const [email, setEmail] = useState("");
@@ -33,7 +35,8 @@ const LoginPage = ({ location }) => {
         <Row className="justify-content-md-center">
           <Col xs={12} md={6}>
             <h1>Sign In</h1>
-            {error}
+            {error && <Message variant="danger">{error}</Message>}
+            {loading && <Loader />}
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="email">
                 <Form.Label>Email Address</Form.Label>
