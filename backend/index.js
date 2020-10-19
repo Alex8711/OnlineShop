@@ -4,6 +4,8 @@ import connectDB from "./connectDB.js";
 import productsAPI from "./api/productsAPI.js";
 import usersAPI from "./api/usersAPI.js";
 import testAPI from "./api/testToken.js";
+import uploadAPI from './api/uploadAPI.js'
+import path from 'path';
 
 dotenv.config();
 
@@ -15,7 +17,11 @@ app.use(express.json());
 
 app.use("/api/products", productsAPI);
 app.use("/api/users", usersAPI);
+app.use("/api/upload", uploadAPI);
 app.use("/api", testAPI);
+
+const __dirname = path.resolve()
+app.use('/uploads',express.static(path.join(__dirname,'/uploads')))
 
 app.use((err, req, res, next) => {
   res.status(err.code || statusCode);
