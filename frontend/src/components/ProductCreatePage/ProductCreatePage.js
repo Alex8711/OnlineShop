@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Button,Container,Row,Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProduct} from '../../actions/productActions'
+import { getProduct,updateProduct} from '../../actions/productActions'
 
 const ProductCreatePage = ({match,history}) => {
     const productId = match.params.id
@@ -18,10 +18,20 @@ const ProductCreatePage = ({match,history}) => {
   const dispatch = useDispatch()
   const  productDetail = useSelector((state)=>state.productDetail)
   const{loading,error,product} =productDetail
+
+  const  productUpdate = useSelector((state)=>state.productUpdate)
+  const{loading:loadingUpdate,error:errorUpdate,success:successUpdate} =productUpdate
   console.log(product);
+  console.log(successUpdate);
 
  useEffect(()=>{
-     if(!product.name || product._id !==productId)
+    console.log(successUpdate);
+     if(successUpdate){
+        console.log(successUpdate);
+         dispatch({type:"PRODUCT_UPDATE_RESET"})
+         history.push('/admin/productlist')
+     }else{
+        if(!product.name || product._id !==productId)
      {
          console.log(product);
          dispatch(getProduct(productId));
@@ -36,10 +46,22 @@ const ProductCreatePage = ({match,history}) => {
         setCountInStock(product.countInStock)
         setDescription(product.description)
      }
- },[dispatch,product._id])
+     }
+     
+ },[dispatch,product._id,successUpdate,history])
 
   const submitHandler =(e)=>{
       e.preventDefault();
+      dispatch(updateProduct({
+          _id:productId,
+          name,
+          price,
+          image,
+          brand,
+          category,
+          description,
+          countInStock
+      }))
   }
     return ( 
         <>
