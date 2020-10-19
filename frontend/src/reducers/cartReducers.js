@@ -1,25 +1,28 @@
-export const cartReducer = (state = { cartItems: [] }, action) => {
+
+export const cartDetailReducer = (state={cartItems:[]},action)=>{
   switch (action.type) {
-    case "CART_ADD_ITEM":
-      const itemAdded = action.payload;
-      const existItem = state.cartItems.find(
-        (item) => item.product === itemAdded.product
-      );
-      //needs to some work here
-      if (existItem) {
-        return {
-          ...state,
-          cartItems: state.cartItems.map((item) =>
-            item.product === existItem.product ? existItem : item
-          ),
-        };
-      } else {
-        return {
-          ...state,
-          cartItems: [...state.cartItems, itemAdded],
-        };
-      }
+    case "CART_DETAIL_REQUEST":
+      return { loading: true, cartItems:[] };
+    case "CART_DETAIL_SUCCESS":
+      return { loading: false, success:true,cartItems:action.payload};
+
+    case "CART_DETAIL_FAIL":
+      return { loading: false, error: action.payload };
     default:
-      break;
+      return state;
+  }
+}
+
+export const addToCartReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "ADD_TO_CART_REQUEST":
+      return { loading: true };
+    case "ADD_TO_CART_SUCCESS":
+      return { loading: false, success:true,addedProduct:action.payload};
+
+    case "ADD_TO_CART_FAIL":
+      return { loading: false, error: action.payload };
+    default:
+      return state;
   }
 };

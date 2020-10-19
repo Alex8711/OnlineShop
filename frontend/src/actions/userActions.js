@@ -84,7 +84,7 @@ export const register = (name, email, password) => {
   };
 };
 
-export const getUserDetails = (id) => {
+export const getUserDetails = (profile) => {
   return async (dispatch, getState) => {
     try {
       dispatch({
@@ -99,7 +99,7 @@ export const getUserDetails = (id) => {
           Authorization: `Bearer ${userInfo.token}`,
         },
       };
-      const { data } = await axios.get(`/api/users/${id}`, config);
+      const { data } = await axios.get(`/api/users/${profile}`, config);
 
       dispatch({
         type: "USER_DETAILS_SUCCESS",

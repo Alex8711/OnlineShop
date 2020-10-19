@@ -143,6 +143,72 @@ router.get("/profile", auth, async (req, res, next) => {
   }
 });
 
+// get user cart
+router.get("/cart", auth, async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    res.json(user.cart);
+  } else {
+    return next(new HttpError("User not found", 404));
+  }
+});
+
+// add product to user cart
+router.post("/cart", auth, async (req, res, next) => {
+  const{productId,qty} =req.body
+  User.findOne({ _id: req.user._id }, (err, userInfo) => {
+    let duplicate = false;
+
+    userInfo.cart.forEach(cartInfo => {
+      if (cartInfo.id === productId) {
+        duplicate = true;
+      }
+    });
+    if (duplicate) {
+      User.findOneAndUpdate(
+        {
+          _id: req.user._id,
+          "cart.id": productId
+        },
+        {
+          $inc: { "cart.$.quantity": qty }
+        },
+        {
+          new: true
+        },
+        (err,userInfo) => {
+          if(err){
+            return next(new HttpError("Add to Cart Failed", 500))
+          }
+          res.status(200).json({productId,qty});
+        }
+      );
+    } else {
+      User.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+          $push: {
+            cart: {
+              id: productId,
+              quantity: qty,
+              date: Date.now()
+            }
+          }
+        },
+        { new: true },
+        (err, userInfo) => {
+          if(err){
+            return next(new HttpError("Add to Cart Failed", 500))
+          }
+          res.status(200).json({productId,qty});
+        }
+      );
+    }
+  });
+});
+
+
 // update user profile
 router.put("/profile", auth, async (req, res, next) => {
   const user = await User.findById(req.user._id);

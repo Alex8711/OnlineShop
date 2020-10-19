@@ -12,26 +12,29 @@ import {
 import { LinkContainer } from "react-router-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "../../actions/productActions";
+import { addToCart } from "../../actions/cartActions";
 import { useHistory } from "react-router-dom";
+import Loader from '../shared/Loader/Loader';
 
 const ProductPage = ({ match }) => {
   const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const history = useHistory();
   const { product, loading } = useSelector((state) => state.productDetail);
+  const productId = product._id;
   useEffect(() => {
     dispatch(getProduct(match.params.id));
   }, [dispatch]);
 
-  const addToCartHandler = () => {
-    console.log("add to cart");
-    history.push(`/cart/${match.params.id}?qty=${qty}`);
+  const addToCartHandler =(event)=> {
+    event.preventDefault();
+    dispatch(addToCart({productId,qty}));
   };
 
   return (
     <>
       {loading ? (
-        <h2>Loading</h2>
+        <Loader/>
       ) : (
         <Container>
           <LinkContainer to="/">
