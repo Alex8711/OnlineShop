@@ -13,6 +13,8 @@ export const cartDetailReducer = (state={cartItems:[]},action)=>{
   }
 }
 
+
+
 export const addToCartReducer = (state = {}, action) => {
   switch (action.type) {
     case "ADD_TO_CART_REQUEST":
@@ -21,6 +23,20 @@ export const addToCartReducer = (state = {}, action) => {
       return { loading: false, success:true,addedProduct:action.payload};
 
     case "ADD_TO_CART_FAIL":
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const removeFromCartReducer = (state = {}, action) => {
+  switch (action.type) {
+    case "REMOVE_FROM_CART_REQUEST":
+      return { loading: true };
+    case "REMOVE_FROM_CART_SUCCESS":
+      return { loading: false, success:true,message:action.payload};
+
+    case "REMOVE_FROM_CART_FAIL":
       return { loading: false, error: action.payload };
     default:
       return state;

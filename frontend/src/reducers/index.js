@@ -9,7 +9,7 @@ import {
   userDeleteReducer
 } from "./userReducers";
 
-import {addToCartReducer,cartDetailReducer} from './cartReducers'
+import {addToCartReducer,cartDetailReducer,removeFromCartReducer} from './cartReducers'
 
 const rootReducers = combineReducers({
   productList: productListReducer,
@@ -24,7 +24,8 @@ const rootReducers = combineReducers({
   userDelete:userDeleteReducer,
   productUpdate:productUpdateReducer,
   addToCart:addToCartReducer,
-  cartDetail:cartDetailReducer
+  cartDetail:cartDetailReducer,
+  removeFromCart:removeFromCartReducer
 });
 
 export default rootReducers;

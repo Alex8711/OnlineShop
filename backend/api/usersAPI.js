@@ -212,6 +212,21 @@ router.post("/cart", auth, async (req, res, next) => {
 });
 
 
+//remove the product(s) from cart
+// /api/products/:id
+// only for admin
+router.delete("/cart/:id",auth, async (req, res,next) => {
+  const id = req.params.id;
+  console.log(id);
+  User.findOneAndUpdate({_id:req.user._id},{$pull:{cart:{product:id}}},{new:true},(err,userInfo)=>{
+    
+    if(err){
+      return next(new HttpError("Remove to Cart Failed", 500))
+    }
+    return res.status(200).json("Removed Successfully")
+  })
+});
+
 // update user profile
 router.put("/profile", auth, async (req, res, next) => {
   const user = await User.findById(req.user._id);

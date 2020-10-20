@@ -12,7 +12,7 @@ import {
   Container,
 } from "react-bootstrap";
 import { useEffect } from "react";
-import {getCartDetail}    from '../../actions/cartActions'
+import {getCartDetail,removeFromCart}    from '../../actions/cartActions'
 import Message from '../shared/Message/Message';
 
 const CartPage = ({ match, location, history }) => {
@@ -20,21 +20,24 @@ const CartPage = ({ match, location, history }) => {
   console.log(location);
   const qty = location.search ? Number(location.search.split("=")[1]) : 1;
   const cartDetail = useSelector(state=>state.cartDetail);
+  const removeFromCartState = useSelector(state=>state.removeFromCart);
   const {loading,success,cartItems} = cartDetail
+  const {loading:removeLoading,success:removeSuccess,message} = removeFromCartState
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getCartDetail())
-  },[dispatch]);
+  },[dispatch,removeSuccess]);
   
   const addToCart=(productId,qty)=>{
     console.log('add');
   }
   const removeFromCartHandler=(id)=>{
-    console.log(id);
+    dispatch(removeFromCart(id));
   }
   return (
     <>
-      <Container>
+      <Container className="mt-3">
       {cartItems.length==0? (<h2>You Shopping Cart Is Empty</h2>) :(<Row>
           <Col md={8}>
             <h1>Shopping Cart</h1>

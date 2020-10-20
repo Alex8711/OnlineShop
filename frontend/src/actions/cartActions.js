@@ -71,3 +71,38 @@ export const getCartDetail = () => {
     
   }
 }
+
+export const removeFromCart = (id) =>{
+    return async (dispatch,getState)=>{
+        try {
+            dispatch({
+                type: "REMOVE_FROM_CART_REQUEST", 
+              });
+              const {
+                userLogin: { userInfo },
+              } = getState();
+              const config = {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${userInfo.token}`,
+                },
+              };
+              console.log(userInfo.token);
+             const{data} = await axios.delete(`/api/users/cart/${id}`,config);
+        
+              dispatch({
+                type: "REMOVE_FROM_CART_SUCCESS",
+                payload: data
+              });
+        } catch (error) {
+            dispatch({
+                type: "REMOVE_FROM_CART_FAIL",
+                payload:
+                  error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.response,
+              });
+        }
+    
+  }
+}
