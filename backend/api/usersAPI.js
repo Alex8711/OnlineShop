@@ -145,13 +145,16 @@ router.get("/profile", auth, async (req, res, next) => {
 
 // get user cart
 router.get("/cart", auth, async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-
-  if (user) {
-    res.json(user.cart);
-  } else {
-    return next(new HttpError("User not found", 404));
+  
+  let userInfo
+  try {
+    userInfo=await User.findById(req.user._id).populate("cart.product");
+    console.log(userInfo);
+    res.json(userInfo);
+  } catch (error) {
+    return next(new HttpError("CartInfo not found", 404));
   }
+    
 });
 
 // add product to user cart
@@ -161,7 +164,7 @@ router.post("/cart", auth, async (req, res, next) => {
     let duplicate = false;
 
     userInfo.cart.forEach(cartInfo => {
-      if (cartInfo.id === productId) {
+      if (cartInfo.product == productId) {
         duplicate = true;
       }
     });
@@ -169,7 +172,7 @@ router.post("/cart", auth, async (req, res, next) => {
       User.findOneAndUpdate(
         {
           _id: req.user._id,
-          "cart.id": productId
+          "cart.product": productId
         },
         {
           $inc: { "cart.$.quantity": qty }
@@ -190,7 +193,7 @@ router.post("/cart", auth, async (req, res, next) => {
         {
           $push: {
             cart: {
-              id: productId,
+              product: productId,
               quantity: qty,
               date: Date.now()
             }
